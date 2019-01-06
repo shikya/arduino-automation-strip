@@ -1,4 +1,4 @@
-int ldr = A0;
+int ldr = A7;
 int led = 6;
 int value =0;
 

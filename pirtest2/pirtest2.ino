@@ -1,7 +1,7 @@
 void setup()  {
   Serial.begin(9600);
   pinMode(2,INPUT);
-  digitalWrite(6,LOW);
+  //digitalWrite(6,LOW);
 }
 
 void loop()  {

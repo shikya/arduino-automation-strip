@@ -1,4 +1,4 @@
-int LED = 6;
+int LED = 3;
 int PIR = 2;
 
 void setup() {

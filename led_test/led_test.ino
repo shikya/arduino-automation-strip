@@ -2,6 +2,7 @@
 
 void setup(){
   pinMode(fadePin, OUTPUT);
+  analogWrite(fadePin, 0);
 }
 
 void loop(){
