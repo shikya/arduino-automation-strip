@@ -30,3 +30,13 @@ Yet to commit.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## TODOs
+
+- [x] Initial Repository
+- [x] Add sketch for ldr test
+- [x] Add sketch for led test
+- [x] Add sketch for pdm controller for led strip
+- [x] Add sketch for pir test
+- [ ] Add documentation
+- [ ] Add diagram to connect all components
