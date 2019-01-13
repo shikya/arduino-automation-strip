@@ -1,7 +1,7 @@
 int LED = 3;
 int PIR = 2;
 int LDR = A7;
-int ledmin = 400
+int ledmin = 400;
 
 void setup() {
   // set strip output
@@ -68,7 +68,7 @@ void loop() {
         }
         goto alllit;
       }
-      delay(30);
+      delay(15);
     }
 
     digitalWrite(LED_BUILTIN, LOW);
