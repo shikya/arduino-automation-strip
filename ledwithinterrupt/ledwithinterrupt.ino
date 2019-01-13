@@ -3,32 +3,81 @@
 #define LED 3
 #define PIR 2
 #define LDR A7
-#define LDRTreshhold 200
-#define dimmedValue 125
+#define LDRTreshhold 450
 
-#define off 0
-#define lit 1
-#define dim 2
-
-int ledState = off;
+#define MAX 255
+#define DIM 10
+#define OFF 0
 
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   pinMode(LED, OUTPUT); // set strip output
   pinMode(PIR, INPUT); // set pir as input
-  pinMode(LED_BUILTIN, OUTPUT); // set builtin led
-  digitalWrite(LED_BUILTIN, LOW); // turn off built in led
-  Serial.println("");
-  Serial.println("isr");
-  setStrip(0);
+  //pinMode(LED_BUILTIN, OUTPUT); // set builtin led
+  //digitalWrite(LED_BUILTIN, LOW); // turn off built in led
+  //Serial.println("");
+  //Serial.println("isr");
+  setStrip(OFF);
 
   ledFlash();
 }
 
 void loop() {
+  int i=OFF;
+  Serial.println("Started");
+  setStrip(OFF);
   attachInterrupt(digitalPinToInterrupt(PIR), isr, CHANGE);
+  Serial.println("sleeping");
+  sleep:
   sleep();
+  Serial.print("Lumen ");
+  Serial.println(analogRead(LDR));
+  if(isLit())
+    goto sleep;
+  Serial.println("\n\nwaking up");
   detachInterrupt(digitalPinToInterrupt(PIR));
+  
+  startover:
+  Serial.println("power on");
+  for(; i<MAX; i++) {
+    setStrip(i);
+    delay(5);
+  }
+  
+  alllit:
+  Serial.println("30 sec wait");
+  delay(30000);
+  Serial.println("Diming");
+  for(; i>DIM; i--) {
+    setStrip(i);
+    if(digitalRead(PIR) == HIGH) {
+      goto startover;
+    }
+    delay(15);
+  }
+
+  Serial.println("Diming Complete");
+  unsigned long start = millis();
+  unsigned long target = start + 20000;
+  Serial.print("Start is : ");
+  Serial.println(start);
+  Serial.print("Target is : ");
+  Serial.println(target);
+  while(target > millis()) {
+    if(digitalRead(PIR) == HIGH) {
+      goto startover;
+    }    
+  }
+  Serial.println(millis());
+  
+  Serial.println("Power Off");
+  for(; i>OFF; i--) {
+    setStrip(i);
+    if(digitalRead(PIR) == HIGH) {
+      goto startover;
+    }    
+    delay(15);
+  }
 }
 
 void sleep(){
@@ -46,25 +95,13 @@ void ledFlash() {
 }
 
 void isr() {
-//  if(ledState==off)
-    // setStrip(255);
-    Serial.println("RISING");
-    ledFlash();
-  digitalWrite(LED_BUILTIN, HIGH);
 }
 
-void setStrip(char i) {
-  Serial.println("Setting strip "+ i);
+void setStrip(int i) {
   analogWrite(LED, i);
-  if(i>250)
-    ledState = lit;
-  if(i<250 && i>0)
-    ledState = dim;
-  if(i==0)
-    ledState = off;
 }
 
-bool alreadylit() {
-  return analogRead(LDR) < LDRTreshhold ? true : false ;
+bool isLit() {
+  return(analogRead(LDR) > LDRTreshhold);
 }
 
